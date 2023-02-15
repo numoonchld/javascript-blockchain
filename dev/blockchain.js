@@ -3,6 +3,9 @@ const sha256 = require('sha256')
 function Blockchain() {
     this.chain = []
     this.pendingTransactions = []
+
+    // create genesis block
+    this.createNewBlock(0, '0','0')
 }
 
 /*
@@ -31,12 +34,12 @@ Blockchain.prototype.createNewBlock = function (nonce, previousBlockHash, hash) 
     return newBlock
 }
 
-Blockchain.prototype.getLastBlock = function() {
+Blockchain.prototype.getLastBlock = function () {
     return this.chain[this.chain.length - 1]
 }
 
 // these transactions are not set in stone until a new block is mined
-Blockchain.prototype.createNewTransaction = function(amount, sender, recipient) {
+Blockchain.prototype.createNewTransaction = function (amount, sender, recipient) {
     const newTransaction = {
         amount,
         sender,
@@ -48,10 +51,26 @@ Blockchain.prototype.createNewTransaction = function(amount, sender, recipient) 
     return this.getLastBlock()['index'] + 1
 }
 
-Blockchain.prototype.hashBlock = function(previousBlockHash, currentBlockData, nonce) {
+Blockchain.prototype.hashBlock = function (previousBlockHash, currentBlockData, nonce) {
     const dataString = previousBlockHash + nonce.toString() + JSON.stringify(currentBlockData)
     const computedHash = sha256(dataString)
     return computedHash
+}
+
+Blockchain.prototype.proofOfWork = function (previousBlockHash, currentBlockData) {
+    // repeatedly generate hash => until the hash starts with four zeros!
+
+    let nonce = 0;
+    let newHash = this.hashBlock(previousBlockHash, currentBlockData, nonce)
+
+    // mining core
+    while (newHash.substring(0, 4) !== '0000') {
+        nonce++
+        newHash = this.hashBlock(previousBlockHash, currentBlockData, nonce)
+    }
+
+    // return nonce that returns the correct hash (i.e. starting with '0000')
+    return nonce
 }
 
 module.exports = Blockchain
