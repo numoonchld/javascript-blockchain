@@ -18,4 +18,14 @@ luzcoin.createNewTransaction(5000, 'xA23LAF4457FD', 'xFSDS78FDS69')
 
 luzcoin.createNewBlock(41234, 'SERF253SDFGSDA34', 'HFSD3FFASD4FWEE')
 
-console.log(luzcoin, '\n\n\n', luzcoin.chain[1], '\n\n\n', luzcoin.chain[2], )
+// console.log(luzcoin, '\n\n\n', luzcoin.chain[1], '\n\n\n', luzcoin.chain[2], )
+
+const previousBlockHash = 'asdhfasf4r3q4r'
+const currentBlockData = luzcoin.chain[2].transactions
+const nonce = 100
+
+console.log(previousBlockHash, '\n\n\n', currentBlockData, '\n\n\n', nonce, '\n\n\n',)
+
+console.log(luzcoin.hashBlock(previousBlockHash, currentBlockData, nonce))
+
+
