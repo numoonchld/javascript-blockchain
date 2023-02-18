@@ -39,14 +39,117 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:3000/blockchain",
+					"raw": "http://localhost:3003/blockchain",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3003",
+					"path": [
+						"blockchain"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "mine",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/mine",
 					"protocol": "http",
 					"host": [
 						"localhost"
 					],
 					"port": "3000",
 					"path": [
-						"blockchain"
+						"mine"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "accept-incoming-node",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"newNodeURL\": \"http://localhost:3002\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3005/accept-incoming-node",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3005",
+					"path": [
+						"accept-incoming-node"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "accept-existing-nodes-bulk",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"networkNodes\": [\r\n        \"http://localhost:3002\",\r\n        \"http://localhost:3003\",\r\n        \"http://localhost:3004\"\r\n    ]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3001/accept-existing-nodes-bulk",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3001",
+					"path": [
+						"accept-existing-nodes-bulk"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "register-and-broadcast-node",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n   \"newNodeURL\": \"http://localhost:3002\" \r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3001/register-and-broadcast-node",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3001",
+					"path": [
+						"register-and-broadcast-node"
 					]
 				}
 			},
