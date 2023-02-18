@@ -5,13 +5,18 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon --watch dev/ -e js dev/api.js --legacy-watch"
+    "node1": "nodemon --watch dev/ -e js dev/networknode.js 3001 http://localhost:3001 --legacy-watch",
+    "node2": "nodemon --watch dev/ -e js dev/networknode.js 3002 http://localhost:3002 --legacy-watch",
+    "node3": "nodemon --watch dev/ -e js dev/networknode.js 3003 http://localhost:3003 --legacy-watch",
+    "node4": "nodemon --watch dev/ -e js dev/networknode.js 3004 http://localhost:3004 --legacy-watch",
+    "node5": "nodemon --watch dev/ -e js dev/networknode.js 3005 http://localhost:3005 --legacy-watch"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "express": "^4.18.2",
     "nodemon": "^2.0.20",
-    "sha256": "^0.2.0"
+    "sha256": "^0.2.0",
+    "uuid": "^9.0.0"
   }
 }
