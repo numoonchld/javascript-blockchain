@@ -42,3 +42,26 @@ project workbench for [udemy course](https://www.udemy.com/course/build-a-blockc
 ### consensus 
 - a new node with only the genesis block can be added to the network 
     - it can be brought up to speed with the rest of the network with the consensus end point
+
+
+## spinning up the project
+
+- in project root dir:
+    ```bash
+    npm install
+    npm run node1
+    npm run node2
+    npm run node3
+    npm run node4
+    npm run node5
+    ```
+- load the postman API collection, raw JSON request in `/register-and-broadcast-node`
+    ```json
+    {
+        "newNodeURL": "http://localhost:300x" // x: 2,3,4,5 => hit localhost:3001 
+    }
+    ```
+
+- use block explorer in browser: `localhost:300x/block-explorer`
+    - `x: 1,2,3,4,5`
+
