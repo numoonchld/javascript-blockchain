@@ -1,5 +1,7 @@
 # overview
 
+![screen-shot-of-block-explorer](https://www.udemy.com/course/build-a-blockchain-in-javascript/)
+
 ## about
 project workbench for [udemy course](https://www.udemy.com/course/build-a-blockchain-in-javascript/) 
 
