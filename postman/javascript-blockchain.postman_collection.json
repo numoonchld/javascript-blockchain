@@ -154,6 +154,14 @@
 				}
 			},
 			"response": []
+		},
+		{
+			"name": "transaction-broadcast",
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": []
 		}
 	]
 }
