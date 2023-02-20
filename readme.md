@@ -1,6 +1,6 @@
 # overview
 
-![screen-shot-of-block-explorer](https://www.udemy.com/course/build-a-blockchain-in-javascript/)
+![screen-shot-of-block-explorer](https://raw.githubusercontent.com/numoonchld/javascript-blockchain/master/block-explorer-screen.png)
 
 ## about
 project workbench for [udemy course](https://www.udemy.com/course/build-a-blockchain-in-javascript/) 
