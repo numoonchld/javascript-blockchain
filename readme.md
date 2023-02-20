@@ -39,3 +39,6 @@ project workbench for [udemy course](https://www.udemy.com/course/build-a-blockc
 - mine blocks with `/mine` end point to trigger the consensus mechanism check before the block is actually mines
     - 12.5 coins are added to pending transaction to the mining node after each block is mined
 
+### consensus 
+- a new node with only the genesis block can be added to the network 
+    - it can be brought up to speed with the rest of the network with the consensus end point

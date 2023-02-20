@@ -127,4 +127,39 @@ Blockchain.prototype.isChainValid = function (blockchain) {
     return validChain
 }
 
+Blockchain.prototype.getBlock = function (blockHash) {
+
+    let correctBlock = null
+
+    this.chain.forEach(block => {
+        if (block.hash === blockHash) { correctBlock = block }
+    })
+
+    return correctBlock
+}
+
+
+Blockchain.prototype.getTransaction = function (transactionID) {
+
+    let correctTransaction = null
+    let correctBlock = null
+
+    this.chain.forEach(block => {
+
+        block.transactions.forEach(transaction => {
+
+            if (transaction.transactionID === transactionID) {
+                correctTransaction = transaction
+                correctBlock = block
+            }
+
+        })
+    })
+
+    return {
+        transaction: correctTransaction,
+        block: correctBlock
+    }
+}
+
 module.exports = Blockchain

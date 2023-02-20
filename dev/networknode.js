@@ -227,6 +227,83 @@ app.post('/accept-existing-nodes-bulk', function (req, res) {
     })
 })
 
+// consensus end point
+app.get('/consensus', async function (req, res) {
+
+    const blockchainRequestPromises = []
+
+    luzcoin.networkNodes.forEach(networkNodeURL => {
+        const entireBlockchainRequestOptions = {
+            uri: `${networkNodeURL}/blockchain`,
+            method: 'GET',
+            json: true
+        }
+
+        blockchainRequestPromises.push(rp(entireBlockchainRequestOptions))
+    })
+
+    await Promise.all(blockchainRequestPromises)
+        .then(allBlockchainsFromOtherNodes => {
+            const currentChainLength = luzcoin.chain.length
+            let maxChainLength = currentChainLength
+            let newLongestChain, newPendingTransactions;
+
+            allBlockchainsFromOtherNodes.forEach(blockchainCopy => {
+                if (blockchainCopy.chain.length > maxChainLength) {
+                    maxChainLength = blockchainCopy.chain.length
+                    newLongestChain = blockchainCopy.chain
+                    newPendingTransactions = blockchainCopy.pendingTransactions
+                }
+            })
+
+            if (!newLongestChain || (newLongestChain && !luzcoin.isChainValid(newLongestChain))) {
+                res.json({
+                    message: 'current chain has not been replaced!',
+                    chain: luzcoin.chain
+                })
+            }
+            else {
+                luzcoin.chain = newLongestChain
+                luzcoin.pendingTransactions = newPendingTransactions
+
+                res.json({
+                    message: 'chain has been replaced!',
+                    chain: luzcoin.chain
+                })
+            }
+        })
+})
+
+// get block using block-hash
+app.get('/block/:blockHash', function (req, res) {
+    const blockHash = req.params.blockHash
+    const correctBlock = luzcoin.getBlock(blockHash)
+
+    res.json({
+        block: correctBlock
+    })
+})
+
+// get block using transaction ID
+app.get('/transaction/:transactionID', function (req, res) {
+    const transactionID = req.params.transactionID
+
+    const { transaction, block } = luzcoin.getTransaction(transactionID)
+
+    res.json({
+        transaction,
+        block
+    })
+
+})
+
+// get address data
+app.get('/address/:address', function (req, res) {
+
+})
+
+
+
 // setup the listener @ port 3000
 app.listen(port, function () {
     console.log(`listening on port ${port}...`)
