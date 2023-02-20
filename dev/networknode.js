@@ -32,15 +32,51 @@ app.get('/blockchain', function (req, res) {
 
 // endpoint to post a new transaction
 app.post('/transaction', function (req, res) {
+    /*
     console.log(req.body)
 
     const { amount, sender, recipient } = req.body
     const blockIndex = luzcoin.createNewTransaction(amount, sender, recipient)
     res.json(`Transaction will be added in block number: ${blockIndex}`)
+    */
+
+    const newTransaction = req.body
+    const blockIndex = luzcoin.addTransactionToPending(newTransaction)
+    res.json({
+        message: `transaction will be added in block ${blockIndex}`
+    })
+})
+
+// broadcast a transaction
+app.post('/transaction/broadcast', async function (req, res) {
+    // create a new transaction and put it in pending transaction for this node
+    const { amount, sender, recipient } = req.body
+    const newTransaction = luzcoin.createNewTransaction(amount, sender, recipient)
+    luzcoin.addTransactionToPending(newTransaction)
+
+    const broadcastPromises = []
+    // broadcast this new transaction to all nodes in the network
+    luzcoin.networkNodes.forEach(networkNodeURL => {
+        const broadcastOptions = {
+            uri: `${networkNodeURL}/transaction`,
+            method: "POST",
+            body: newTransaction,
+            json: true
+        }
+
+        broadcastPromises.push(rp(broadcastOptions))
+    })
+
+    await Promise.all(broadcastPromises).then(data => {
+        res.json({
+            'message': 'transaction created and broadcasted successfully!'
+        })
+    })
+
 })
 
 // endpoint to trigger mining of a new block
-app.get('/mine', function (req, res) {
+app.get('/mine', async function (req, res) {
 
     const previousBlock = luzcoin.getLastBlock();
     const previousBlockHash = previousBlock.hash
@@ -54,16 +90,77 @@ app.get('/mine', function (req, res) {
 
     const currentBlockHash = luzcoin.hashBlock(previousBlockHash, currentBlockDataForNonceGeneration, minedNonce)
 
-    // mining reward
-    luzcoin.createNewTransaction(12.5, "00", nodeAddress)
 
+    // set new block in stone for this node
     const newBlock = luzcoin.createNewBlock(minedNonce, previousBlockHash, currentBlockHash)
-    res.json({
-        message: "mined new block successfully",
-        block: newBlock
+
+    // broadcast new block to other nodes
+    const newBlockBroadcastPromises = []
+
+    luzcoin.networkNodes.forEach(networkNodeURL => {
+        const blockBroadcastOptions = {
+            uri: `${networkNodeURL}/receive-new-block`,
+            method: 'POST',
+            body: { newBlock },
+            json: true
+        }
+
+        newBlockBroadcastPromises.push(rp(blockBroadcastOptions))
     })
+
+
+    await Promise.all(newBlockBroadcastPromises)
+        .then(data => {
+            const transactionBroadcastOption = {
+                url: `${luzcoin.currentNodeURL}/transaction/broadcast`,
+                method: 'POST',
+                body: {
+                    amount: 12.5,
+                    sender: '00',
+                    recipient: nodeAddress
+                },
+                json: true
+            }
+
+            return rp(transactionBroadcastOption)
+
+        }).then(data => {
+            res.json({
+                message: "mined and broadcasted new block successfully",
+                block: newBlock
+            })
+        })
+
 })
 
+// receive broadcasted block from node that mined block
+app.post('/receive-new-block', async function (req, res) {
+
+    const newBlock = req.body.newBlock
+
+    // check if previous block hash is the same as the latest block on currently received block
+    const latestBlock = luzcoin.getLastBlock()
+
+    // new block validations
+    const correctHash = Boolean(latestBlock.hash === newBlock.previousBlockHash)
+    const correctIndex = Boolean(latestBlock.index + 1 === newBlock.index)
+
+    if (correctHash && correctIndex) {
+        luzcoin.chain.push(newBlock)
+        luzcoin.pendingTransactions = []
+        res.json({
+            message: 'new block received and accepted!',
+            newBlock
+        })
+    }
+    else {
+        res.json({
+            message: 'new block rejected!',
+            newBlock
+        })
+    }
+
+})
 
 // register a node and broadcast network node to the rest of the network
 app.post('/register-and-broadcast-node', async function (req, res) {
