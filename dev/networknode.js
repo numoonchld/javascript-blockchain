@@ -299,10 +299,18 @@ app.get('/transaction/:transactionID', function (req, res) {
 
 // get address data
 app.get('/address/:address', function (req, res) {
+    const address = req.params.address
 
+    const addressData = luzcoin.getAddressData(address)
+
+    res.json({
+        addressData
+    })
 })
 
-
+app.get('/block-explorer', function (req, res) {
+    res.sendFile('./block-explorer/index.html', { root: __dirname })
+})
 
 // setup the listener @ port 3000
 app.listen(port, function () {

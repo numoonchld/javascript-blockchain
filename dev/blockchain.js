@@ -138,7 +138,6 @@ Blockchain.prototype.getBlock = function (blockHash) {
     return correctBlock
 }
 
-
 Blockchain.prototype.getTransaction = function (transactionID) {
 
     let correctTransaction = null
@@ -160,6 +159,30 @@ Blockchain.prototype.getTransaction = function (transactionID) {
         transaction: correctTransaction,
         block: correctBlock
     }
+}
+
+Blockchain.prototype.getAddressData = function (address) {
+    const addressTransactions = []
+    
+    this.chain.forEach(block => {
+        block.transactions.forEach(transaction => {
+            if (transaction.sender === address || transaction.recipient === address) {
+                addressTransactions.push(transaction)
+            }
+        })
+    })
+
+    let addressBalance = 0
+
+    addressTransactions.forEach(transaction => {
+        if (transaction.recipient === address) addressBalance += transaction.amount
+        else if (transaction.sender === address) addressBalance -= transaction.amount
+    })
+
+    return ({
+        addressTransactions,
+        addressBalance
+    })
 }
 
 module.exports = Blockchain
